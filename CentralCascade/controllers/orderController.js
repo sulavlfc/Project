@@ -1,20 +1,22 @@
 var bodyParser = require('body-parser');
 var request = require('superagent');
 var Order = require("../models/order");
+var Order = require("../models/customer_order");
 var Token = require("../models/rainer_token");
 var mongoose = require('mongoose');
 var q = require('q');
 mongoose.Promise = q.Promise;
 exports.post_order = function(req, res) {
-	//console.log(req);
+	console.log(req.body.make);
 	var order = new Order({
 		make: req.body.make,
 		model: req.body.model,
 		package: req.body.package,
 		customer_id: req.body.customer_id
-	});
+    });
+    
 	order.save().then(function(data) {
-		console.log(data)
+		console.log("data is "+ data)
         request
         .post('https://hbwut3q1ld.execute-api.us-east-2.amazonaws.com/test/orderFunction')
         .send(data)
@@ -23,7 +25,7 @@ exports.post_order = function(req, res) {
 				console.log(err)
 				res.sendStatus(400)
 			} else {
-				//supplier(acme_call(data),res,response);
+				//supplier(acme_call(data),res,response,data);
 				var rainer_promise = Token.count({}).exec();
 				rainer_promise.then(function(count) {
 					console.log(count)
@@ -42,7 +44,7 @@ exports.post_order = function(req, res) {
 					} else {
 						Token.find({}, function(err, token) {
 							console.log("after : " + token[0].token)
-							supplier(rainer_call(data, token[0].token), res, response);
+							supplier(rainer_call(data, token[0].token), res, response,data);
 						});
 					}
 				});
@@ -131,10 +133,18 @@ function rainer_call(data, token) {
 	})
 }
 
-function supplier(promise, res, response) {
+function supplier(promise, res, response,data) {
+
 	promise.then(function(supp_response) {
 		console.log("henrenow")
-		console.log(supp_response)
+        console.log(supp_response)
+        console.log(data.make)
+        // var customerOrder = new Order({
+        //     make: req.body.make,
+        //     model: req.body.model,
+        //     package: req.body.package,
+        //     customer_id: req.body.customer_id
+	    // });
 		res.json({
 			message: "success",
 			url: response.body.Location,
