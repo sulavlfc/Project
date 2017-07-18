@@ -1,22 +1,23 @@
 var bodyParser = require('body-parser');
 var request = require('superagent');
 var Order = require("../models/order");
-var Order = require("../models/customer_order");
+var CustomerOrder = require("../models/customer_order");
 var Token = require("../models/rainer_token");
 var mongoose = require('mongoose');
 var q = require('q');
 mongoose.Promise = q.Promise;
+
+
 exports.post_order = function(req, res) {
-	console.log(req.body.make);
+	
 	var order = new Order({
 		make: req.body.make,
 		model: req.body.model,
 		package: req.body.package,
 		customer_id: req.body.customer_id
     });
-    
+	    
 	order.save().then(function(data) {
-		console.log("data is "+ data)
         request
         .post('https://hbwut3q1ld.execute-api.us-east-2.amazonaws.com/test/orderFunction')
         .send(data)
@@ -54,52 +55,7 @@ exports.post_order = function(req, res) {
 		console.log('error :', err);
 		res.send(400);
 	});
-	// order.save(function (err, data) {
-	//     if (err) {
-	//         var err = new Error();
-	//         //console.log(err.status)
-	//         res.send(400)
-	//     }
-	//     else {
-	//         request
-	//             .post('https://hbwut3q1ld.execute-api.us-east-2.amazonaws.com/test/orderFunction')
-	//             .send(data)
-	//             .end(function(err, response){
-	//                 //console.log(res)
-	//                 if(err){
-	//                     console.log(err)
-	//                     res.sendStatus(400)
-	//                 }
-	//                 else{
-	//                    //supplier(acme_call(data),res,response);
-	//                     var rainer_promise = Token.count({}).exec();
-	//                      rainer_promise.then(function(count){
-	//                         console.log(count)
-	//                         if (count == 0){
-	//                             request
-	//                             .get('http://localhost:3051/r/nonce_token?store_front=ccas-bb9630c04f')
-	//                             .end(function(err,resp){
-	//                                 console.log(resp.body)
-	//                                     var token = new Token({
-	//                                         token : resp.body.nonce_token
-	//                                     });
-	//                                     console.log("before : " +  token)
-	//                                     token.save();
-	//                                     supplier(rainer_call(data,resp.body.nonce_token),res,response);
-	//                             });
-	//                         }
-	//                         else{
-	//                             Token.find({},function(err,token){
-	//                                 console.log("after : " + token[0].token)
-	//                                 rainer_call(data,token[0].token)
-	//                                 supplier(rainer_call(data,token[0].token),res,response);
-	//                             });
-	//                         }
-	//                     });
-	//                 }
-	//             });
-	//     }
-	// });
+
 };
 
 function acme_call(data) {
@@ -138,13 +94,17 @@ function supplier(promise, res, response,data) {
 	promise.then(function(supp_response) {
 		console.log("henrenow")
         console.log(supp_response)
-        console.log(data.make)
-        // var customerOrder = new Order({
-        //     make: req.body.make,
-        //     model: req.body.model,
-        //     package: req.body.package,
-        //     customer_id: req.body.customer_id
-	    // });
+        
+
+        var customerOrder = new CustomerOrder({
+            customer_id : data.customer_id,
+			supplier : supp_response.order.supplier,
+			order_id : supp_response.order.order_id
+	    });
+		customerOrder.save().catch(function(err) {
+		console.log('error :', err);
+		res.send(400);
+	});
 		res.json({
 			message: "success",
 			url: response.body.Location,
