@@ -15,7 +15,16 @@ exports.post_order = function(req, res) {
 		model: req.body.model,
 		package: req.body.package,
 		customer_id: req.body.customer_id
-    });
+	});
+	
+	// order.save(function(err,data){
+	// 	if(err){
+	// 		res.sendStatus(400);
+	// 	}
+	// 	else{
+	// 		res.sendStatus(200);
+	// 	}
+	// })
 	    
 	order.save().then(function(data) {
         request
@@ -26,7 +35,12 @@ exports.post_order = function(req, res) {
 				console.log(err)
 				res.sendStatus(400)
 			} else {
-				//supplier(acme_call(data),res,response,data);
+				if (data.model == "Honda"){
+					supplier(acme_call(data),res,response,data);
+				}
+                else if (data.model == "Ford"){
+                
+               
 				var rainer_promise = Token.count({}).exec();
 				rainer_promise.then(function(count) {
 					console.log(count)
@@ -50,16 +64,19 @@ exports.post_order = function(req, res) {
 					}
 				});
 			}
+			else
+				res.sendStatus(400);
+			}
 		});
-	}).catch(function(err) {
-		console.log('error :', err);
-		res.send(400);
+	})
+  .catch(function(err) {
+		
+		res.sendStatus(400);
 	});
 
 };
 
 function acme_call(data) {
-	console.log("here")
 	return q.Promise(function(resolve, reject) {
         request
         .post('http://localhost:3050/acme/api/v45.1/order?api_key=cascade.53bce4f1dfa0fe8e7ca126f91b35d3a6')
@@ -87,14 +104,14 @@ function rainer_call(data, token) {
 			} else resolve(resp.body);
 		});
 	})
-}
+};
+
+
 
 function supplier(promise, res, response,data) {
 
 	promise.then(function(supp_response) {
-		console.log("henrenow")
-        console.log(supp_response)
-        
+		      
 
         var customerOrder = new CustomerOrder({
             customer_id : data.customer_id,

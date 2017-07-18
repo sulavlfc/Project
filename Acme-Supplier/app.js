@@ -9,10 +9,7 @@ var random = require("random-js")(); // uses the nativeMath engine
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-//routes
 
-
-//var mockServer = require('node-mock-server');
 
 var app = express();
 
@@ -21,11 +18,7 @@ app.set('port', process.env.PORT || 3050);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-//mongoose mlab connection
-//mongoose.connect('mongodb://sulav:sulav12345@ds135519.mlab.com:35519/centralcascade',{ useMongoClient: true });
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,14 +28,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.post("/acme/api/v45.1/order", function(req,res){
-	console.log(req.query)
+
 	if (req.query.api_key == "cascade.53bce4f1dfa0fe8e7ca126f91b35d3a6"){
-		console.log("super")
-		res.json({ order : { supplier :"Acme" , order_id : random.integer(1000, 9999)}});
+			res.json({ order : { supplier :"Acme" , order_id : random.integer(1000, 9999)}});
 	}
 	else
-		console.log("hello")
-		res.sendStatus(400);
+			res.sendStatus(400);
 });
 
 
