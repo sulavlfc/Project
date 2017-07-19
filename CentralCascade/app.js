@@ -23,6 +23,7 @@ app.set('view engine', 'jade');
 
 //mongoose mlab connection
 mongoose.connect('mongodb://sulav:sulav12345@ds135519.mlab.com:35519/centralcascade',{ useMongoClient: true });
+//mongoose.connect('mongodb://localhost:27017/centralcascade',{ useMongoClient: true });
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

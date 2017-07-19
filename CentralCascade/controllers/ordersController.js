@@ -7,7 +7,9 @@ var Key = require("../models/apikeys");
 
 exports.get_orders = function(req, res) {
 
-    console.log(req.query.key);
+    if(req.query.key){
+
+    
     Key.find({"key" : req.query.key},function (err,result) {
         if(err){
             console.log(err)
@@ -23,10 +25,14 @@ exports.get_orders = function(req, res) {
                 });
             }
             else {
-                res.send({"message" : "Invalid Key"});
+                //res.send({"message" : "Invalid Key"});
+                res.sendStatus(403);
             }
         }
-    })
+        });
+    }
+    else
+        res.sendStatus(400);
 
 };
 

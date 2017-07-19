@@ -2,14 +2,12 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 var app = require('../app');
 
-process.env.NODE_ENV = 'test';
-
 var should = chai.should();
 var expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Rainer-APP', () => {
+describe('Rainer-APP', function() {
     
 describe('/POST request_customized_model', () => {
       it('it should not POST without a token', (done) => {

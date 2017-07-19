@@ -1,134 +1,109 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-process.env.NODE_ENV = 'test';
+var Mongoose = require('mongoose').Mongoose;
+var mongoose = new Mongoose();
+var Mockgoose = require('mockgoose').Mockgoose;
+var mockgoose = new Mockgoose(mongoose);
 var app = require('../app');
 var Order = require('../models/order');
 var Token = require("../models/rainer_token");
-// const contactController = require('../controllers/contactController');
-
 var should = chai.should();
 var expect = chai.expect;
-
 chai.use(chaiHttp);
 
-describe('Order Post Data validation Test', () => {
-    
-    // beforeEach((done) => {
+// before(function(done) {
+// 	mockgoose.prepareStorage().then(function() {
+// 		mongoose.connect('mongodb://sulav:sulav12345@ds135519.mlab.com:35519/centralcascade',{ useMongoClient: true }, function(err) {
+// 			done(err);
+// 		});
+//         mongoose.connection.on('connected', function() {  
+//             console.log('db connection is now open');
+// 	    }); 
+// 	});
+// });
+
+describe('CentralCascade-APP', function() {
+
+	describe('/POST Order with validations', function() {
+	
+		it('it should not POST without customer_id, incomplete fields', (done) => {
+			let order = {
+				make: "string"
+			};
+			chai.request(app).post('/order').send(order).end(function(err, res) {
+				res.should.have.status(400);
+				done();
+			});
+		});
+		it('it should not POST if model value is wrong', function(done) {
+			let order = {
+				make: "string",
+				model: "GMC",
+				customer_id: 2
+			};
+			chai.request(app).post('/order').send(order).end(function(err, res) {
+				res.should.have.status(400);
+				done();
+			});
+		});
+	});
+
+	describe('Order Post Acme and Rainer Test', function() {
+		beforeEach((done) => {
+			Order.remove({}, (err) => {
+				done();
+			});
+		});
+
+		it('it should POST to Rainer', function(done) {
+			let order = {
+				make: "string",
+				model: "Ford",
+				package: "string",
+				customer_id: 100000
+			};
+			chai.request(app).post('/order').send(order).end(function(err, res) {
+				res.should.have.status(200);
+				done();
+			});
+		});
+
+		it('it should POST to Acme', function(done) {
+			let order = {
+				make: "string",
+				model: "Honda",
+				package: "string",
+				customer_id: 100000
+			};
+			chai.request(app).post('/order').send(order).end(function(err, res) {
+				res.should.have.status(200);
+				done();
+			});
+		});
+	});
+
+	describe('Get /Orders Test', function() {
+
+		it('it should not GET with InCorrect Query String in the URL', function(done) {
+			chai.request(app).get('/orders?keys=G856W6BaOh').end(function(err, res) {
+				res.should.have.status(400);
+				done();
+			});
+		});
+
+		it('it should not GET with InCorrect Key Value', function(done) {
+			chai.request(app).get('/orders?key=hellosulav').end(function(err, res) {
+				res.should.have.status(403);
+				done();
+			});
+		});
         
-    //    // Order.remove({});
-    //     done();         
-        
-    // });
-    describe('/POST Order', () => {
-        it('it should not POST without customer_id, incomplete fields', (done) => {
-           
-            let order = {
-                make : "string"
-            };
-            chai.request(app)
-                .post('/order')
-                .send(order)
-                .end((err, res) => {
-                    res.should.have.status(400);
-                    
-                done();
-                });
-        });
-
-        it('it should not POST if customer_id is not unique', (done) => {
-           
-            //please comment the Order.remove({}) section before running this section of code
-            //please pass some the value of customer_id already from database
-            //Or run this code twice , first time it will fail as it is unique but will fail from next time
-
-            var order = new Order({
-                make : "string",
-                model :"Ford",
-                customer_id : 1
-            });
-
-            chai.request(app)
-                .post('/order')
-                .send(order)
-                .end((err, res) => {
-                    res.should.have.status(400);
-                   
-                done();
-                });
-        });  
-
-        it('it should not POST if model value is wrong', (done) => {
-           
-            //please make sure to change the value of customer_id
-
-            let order = {
-                make : "string",
-                model :"GMC",
-                customer_id : 2
-            };
-
-            chai.request(app)
-                .post('/order')
-                .send(order)
-                .end((err, res) => {
-
-                    res.should.have.status(400);
-                   
-                done();
-                });
-        }); 
-    });
-
-});
-
-
-describe('Order Post Rainer Test', () => {
-    
-    beforeEach((done) => {
-        Order.remove({});    
-        Token.remove({}); 
-               
-        done();
-    });
-    describe('/POST Order', () => {
-        it('it should POST to Rainer', (done) => {
-           
-            let order = {
-                make : "string",
-                model : "Ford",
-                package : "string",
-                customer_id : 1001
-            };
-            chai.request(app)
-                .post('/order')
-                .send(order)
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    
-                done();
-                });
-        });
-
-        // it('it should not POST if customer_id is not unique', (done) => {
-           
-        //     //please comment the Order.remove({}, (err) section before running this section of code
-        //     //please pass some the value of customer_id already from database
-        //     //Or run this code twice , first time it will fail as it is unique but will fail from next time
-
-        //     let order = {
-        //         make : "string",
-        //         customer_id : 2
-        //     };
-
-        //     chai.request(app)
-        //         .post('/order')
-        //         .send(order)
-        //         .end((err, res) => {
-        //             res.should.have.status(400);
-                   
-        //         done();
-        //         });
-        // });        
-    });
-
+		it('it should GET only with Correct Key Value', function(done) {
+			chai.request(app).get('/orders?key=G856W6BaOh').end(function(err, res) {
+				res.should.have.status(200);
+				done();
+			});
+		});
+     
+	});
 });

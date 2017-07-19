@@ -25,6 +25,7 @@ router.get('/nonce_token', function(req, res, next) {
 
 router.post('/request_customized_model', function(req, res, next) {
 console.log("No token")
+console.log(req.query)
 if (req.query.token){
 	res.json({ order : { supplier :"Rainer" , order_id : random.integer(1000, 9999)}});
 }
