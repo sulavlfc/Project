@@ -18,7 +18,9 @@ exports.post_order = function(req, res) {
 	});
 
 
-	    
+	// Order.on('index',function(err){
+	// 	console.log('hello');
+	// })
 	order.save().then(function(data) {
 		console.log(data.model)
         request
@@ -118,8 +120,10 @@ function supplier(promise, res, response,data) {
 	
         var customerOrder = new CustomerOrder({
             customer_id : data.customer_id,
-			supplier : supp_response.order.supplier,
-			order_id : supp_response.order.order_id
+			order : {
+				supplier : supp_response.order.supplier,
+				order_id : supp_response.order.order_id
+			}
 	    });
 		
 		customerOrder.save().catch(function(err) {

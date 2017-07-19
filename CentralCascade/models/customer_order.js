@@ -6,9 +6,11 @@ var mongoose = require("mongoose");
 var customerOrderSchema = new mongoose.Schema({
 
     customer_id : Number,
-    supplier : String,
-    order_id : Number
-
+    order : {
+        supplier : String,
+        order_id : Number
+   }
+    
 
 });
 

@@ -6,7 +6,7 @@ var Order = require("../models/order");
 var Key = require("../models/apikeys");
 
 exports.get_orders = function(req, res) {
-
+    console.log(req.query.key)
     if(req.query.key){
 
     
