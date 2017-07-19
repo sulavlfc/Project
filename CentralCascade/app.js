@@ -11,7 +11,7 @@ var users = require('./routes/users');
 //routes
 var order = require('./routes/order');
 var orders = require('./routes/orders');
-
+var customer = require('./routes/customer');
 //var mockServer = require('node-mock-server');
 
 var app = express();
@@ -36,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/order',order);
 app.use('/orders',orders);
+app.use('/customer_id',customer);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

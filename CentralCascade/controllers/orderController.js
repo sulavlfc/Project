@@ -58,7 +58,7 @@ exports.post_order = function(req, res) {
 							
 						});
 					} else {
-						console.log("noew here")
+						console.log("now here")
 						Token.find({}, function(err, token) {
 							console.log("after : " + token[0].token)
 							supplier(rainer_call(data, token[0].token), res, response,data);
