@@ -38,7 +38,7 @@ app.post("/acme/api/v45.1/order", function(req,res){
 
         req.on('end', function () {
            var post = qs.parse(jsonString);
-           console.log(post)
+          
            
         });
     }
