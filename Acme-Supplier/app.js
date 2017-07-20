@@ -39,7 +39,7 @@ app.post("/acme/api/v45.1/order", function(req,res){
         req.on('end', function () {
            var post = qs.parse(jsonString);
            console.log(post)
-            //console.log(JSON.parse(JSON.stringify(jsonString)));
+           
         });
     }
 	if (req.query.api_key == "cascade.53bce4f1dfa0fe8e7ca126f91b35d3a6"){
