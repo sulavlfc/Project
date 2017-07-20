@@ -24,7 +24,7 @@ exports.post_order = function(req, res) {
 	// 	console.log('hello');
 	// })
 	order.save().then(function(data) {
-		console.log(data.model)
+		
         request
         .post('https://hbwut3q1ld.execute-api.us-east-2.amazonaws.com/test/orderFunction')
         .send(data)
@@ -35,12 +35,12 @@ exports.post_order = function(req, res) {
 			} else {
 				
 				if (data.model == "Honda"){
-					console.log("honda")
+					
 					supplier(acme_call(data),res,response,data);
 				}
                 else if (data.model == "Ford"){
                 
-               console.log("here")
+               
 				var rainer_promise = Token.count({}).exec();
 				rainer_promise.then(function(count) {
 					console.log(count)
@@ -81,12 +81,14 @@ exports.post_order = function(req, res) {
 };
 
 function acme_call(data) {
-	console.log(querystring.stringify(data))
+	var input = JSON.stringify(data);
+
+	console.log(querystring.stringify(JSON.parse(input)))
 	return Q.Promise(function(resolve, reject) {
         request
         .post('http://localhost:3050/acme/api/v45.1/order?api_key=cascade.53bce4f1dfa0fe8e7ca126f91b35d3a6')
 		 .set('Content-Type', 'x-www-form-urlencoded')
-        .send(querystring.stringify(data))
+        .send(querystring.stringify(JSON.parse(input)))
         .end(function(err, resp) {
 			console.log('getting to end cb');
 			if (err) {
