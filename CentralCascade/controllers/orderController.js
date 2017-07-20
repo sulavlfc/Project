@@ -5,6 +5,8 @@ var CustomerOrder = require("../models/customer_order");
 var Token = require("../models/rainer_token");
 var mongoose = require('mongoose');
 var Q = require('q');
+var querystring = require('querystring')
+
 mongoose.Promise = Q.Promise;
 
 
@@ -79,10 +81,12 @@ exports.post_order = function(req, res) {
 };
 
 function acme_call(data) {
+	console.log(querystring.stringify(data))
 	return Q.Promise(function(resolve, reject) {
         request
         .post('http://localhost:3050/acme/api/v45.1/order?api_key=cascade.53bce4f1dfa0fe8e7ca126f91b35d3a6')
-        .send(data)
+		 .set('Content-Type', 'x-www-form-urlencoded')
+        .send(querystring.stringify(data))
         .end(function(err, resp) {
 			console.log('getting to end cb');
 			if (err) {

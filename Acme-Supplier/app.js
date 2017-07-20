@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.post("/acme/api/v45.1/order", function(req,res){
-
+  console.log(req.body)
 	if (req.query.api_key == "cascade.53bce4f1dfa0fe8e7ca126f91b35d3a6"){
 			res.json({ order : { supplier :"Acme" , order_id : random.integer(1000, 9999)}});
 	}
